@@ -46,7 +46,7 @@ if __name__ == '__main__':
     print("Printing DataFrame " )
     data_df.show(8)
     data_df.select(to_date('action_at').alias('Time')).show()
-    data_df.groupBy("ride_id").pivot("action_type").agg(first("action_at")).collect()
+    data_df.groupBy("ride_id").pivot("action_type").agg(first("action_at")).show()
 
     ## spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/Exercise.py
 

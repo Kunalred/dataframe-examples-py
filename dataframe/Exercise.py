@@ -41,7 +41,7 @@ if __name__ == '__main__':
                  #StructField("action_type", StringType(), False))
 
     data_df = spark.createDataFrame(data, schema)
-    data_df.select(to_date('action_at')).alias('Time').collect()
+    data_df.select(to_date('action_at').alias('Time')).collect()
     data_df.groupBy("ride_id").pivot("action_type").agg(first("action_at")).collect()
 
     ## spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/Exercise.py

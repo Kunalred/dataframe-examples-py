@@ -1,0 +1,44 @@
+from pyspark.sql import *
+import os.path
+import yaml
+
+if __name__ == '__main__':
+    os.environ['PYSPARK_SUBMIT_ARGS'] = ('--packages "org.apache.hadoop:hadoop-aws:2.7.4" pyspark-shell')
+
+    # Creating Spark Session
+    spark = SparkSession \
+                .builder \
+                .appName('Exercise')\
+                .master('local[*]')\
+                .getOrCreate()
+    spark.sparkContext.setLogLevel('ERROR')
+
+    current_dir = os.path.abspath(obs.path.dirname(__file__))
+    app_config_path = os.path.abspath(current_dir+'/../'+"application.yml")
+    app_secret_path = os.path.abspath(current_dir+'/../'+".secrets")
+
+    config = open(app_config_path)
+    app_config = yaml.load(config, Loader=yaml.FullLoader)
+    secrets = open(app_secret_path)
+    app_secret = yaml.load(secrets, Loader=yaml.FullLoader)
+
+    data = Seq(Row("A1", 123, '2019-01-01 10:30:00', 'request_ride'),
+               Row("A2", 234, '2019-01-01 11:00:00', 'request_ride'),
+               Row("A1", 123, '2019-01-01 11:10:00', 'payment'),
+               Row("A3", 456, '2019-01-01 12:00:00', 'request_ride'),
+               Row("A4", 567, '2019-01-01 12:10:00', 'cancel_ride'),
+               Row("A3", 456, '2019-01-01 12:10:00', 'payment'),
+               Row("A2", 234, '2019-01-02 12:00:00', 'payment'),
+               Row("A4", 567, '2019-02-01 12:00:00', 'request_ride'),
+               Row("A1", 999, '2019-01-01 10:30:00', 'request_ride'),
+               Row("A1", 999, '2019-02-01 12:30:00', 'payment'))
+    schema = StructType(
+                 StructField("passenger_id", StringType,false),
+                 StructField("ride_id", IntegerType ,true),
+                 StructField("action_at", DateType, false),
+                 StructField("action_type", StringType, false)
+             )
+    data_df = spark.createDataFrame(data, schema)
+    data_df.groupBy("ride_id").pivot("action_type").agg(first("action_at")).collect()
+
+

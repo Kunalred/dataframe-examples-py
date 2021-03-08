@@ -33,11 +33,12 @@ if __name__ == '__main__':
                Row("A4", 567, '2019-02-01 12:00:00', 'request_ride'),
                Row("A1", 999, '2019-01-01 10:30:00', 'request_ride'),
                Row("A1", 999, '2019-02-01 12:30:00', 'payment')]
-    schema = StructType(
-                 StructField("passenger_id", StringType(),False),\
-                 StructField("ride_id", IntegerType() ,True),\
-                 StructField("action_at", DateType(), False),\
-                 StructField("action_type", StringType(), False))
+    schema = StructType().add("passenger_id", StringType(),False).add("ride_id", IntegerType() ,True)\
+            .add("action_at", DateType(), False).add("action_type", StringType(), False)
+                 #StructField("passenger_id", StringType(),False),\
+                 #StructField("ride_id", IntegerType() ,True),\
+                 #StructField("action_at", DateType(), False),\
+                 #StructField("action_type", StringType(), False))
 
     data_df = spark.createDataFrame(data, schema)
     data_df.groupBy("ride_id").pivot("action_type").agg(first("action_at")).collect()

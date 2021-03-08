@@ -41,7 +41,10 @@ if __name__ == '__main__':
                  #StructField("action_at", DateType(), False),\
                  #StructField("action_type", StringType(), False))
 
+
     data_df = spark.createDataFrame(data, schema)
+    print("Printing DataFrame " )
+    data_df.show(8)
     data_df.select(to_date('action_at').alias('Time')).collect()
     data_df.groupBy("ride_id").pivot("action_type").agg(first("action_at")).collect()
 

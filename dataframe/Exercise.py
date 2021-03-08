@@ -34,13 +34,14 @@ if __name__ == '__main__':
                Row("A1", 999, '2019-01-01 10:30:00', 'request_ride'),
                Row("A1", 999, '2019-02-01 12:30:00', 'payment')]
     schema = StructType().add("passenger_id", StringType(),False).add("ride_id", IntegerType() ,True)\
-            .add("action_at", DateType(), False).add("action_type", StringType(), False)
+            .add("action_at", StringType(), False).add("action_type", StringType(), False)
                  #StructField("passenger_id", StringType(),False),\
                  #StructField("ride_id", IntegerType() ,True),\
                  #StructField("action_at", DateType(), False),\
                  #StructField("action_type", StringType(), False))
 
     data_df = spark.createDataFrame(data, schema)
+    data_df.select(to_date('action_at')).alias('Time').collect()
     data_df.groupBy("ride_id").pivot("action_type").agg(first("action_at")).collect()
 
     ## spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/Exercise.py

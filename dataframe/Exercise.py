@@ -13,7 +13,7 @@ if __name__ == '__main__':
                 .getOrCreate()
     spark.sparkContext.setLogLevel('ERROR')
 
-    current_dir = os.path.abspath(obs.path.dirname(__file__))
+    current_dir = os.path.abspath(os.path.dirname(__file__))
     app_config_path = os.path.abspath(current_dir+'/../'+"application.yml")
     app_secret_path = os.path.abspath(current_dir+'/../'+".secrets")
 
@@ -40,5 +40,7 @@ if __name__ == '__main__':
              )
     data_df = spark.createDataFrame(data, schema)
     data_df.groupBy("ride_id").pivot("action_type").agg(first("action_at")).collect()
+
+    ## spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/Exercise.py
 
 

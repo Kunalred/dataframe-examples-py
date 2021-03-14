@@ -46,8 +46,9 @@ if __name__ == '__main__':
     print("Printing DataFrame " )
     data_df.show(8)
     data_df.select(to_timestamp('action_at').alias('Time')).show()
-    data_df.groupBy("ride_id").pivot("action_type").agg(first(to_timestamp("action_at"))).show()
-
+    data2_df=data_df.groupBy("ride_id").pivot("action_type").agg(first(to_timestamp("action_at")))
+    data2_df.select(when('cancel_ride'=='null',datediff('payment','request_ride'))\
+                    .otherwise(datediff('payment', 'cancel_ride'))).show()
     ## spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/Exercise.py
 
 

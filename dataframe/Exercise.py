@@ -48,7 +48,7 @@ if __name__ == '__main__':
     data_df.select(to_timestamp('action_at').alias('Time')).show()
     data2_df=data_df.groupBy("passenger_id", "ride_id").pivot("action_type").agg(first(to_timestamp("action_at")))
     data2_df.select("*", when(col('cancel_ride').isNull(),(col('payment').cast("long") - col('request_ride').cast("long"))/60)\
-                    .otherwise((col('cancel_ride').cast("long") - col('request_ride').cast("long"))/60).as("time_diff")).show()
+                    .otherwise((col('cancel_ride').cast("long") - col('request_ride').cast("long"))/60).alias("time_diff")).show()
 
 ## spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/Exercise.py
 
